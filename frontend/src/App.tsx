@@ -96,6 +96,11 @@ function App() {
       // Reset selection
       setStartSelection(null);
 
+      // Re-fetch bookings for current room/week
+      if (selectedRoom) {
+        fetchBookingsForWeek(selectedRoom, weekStart);
+      }
+
     } catch (err: any) {
       const message =
         err.response?.data?.detail || "Failed to create booking.";
