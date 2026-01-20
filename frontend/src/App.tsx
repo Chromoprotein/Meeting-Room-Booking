@@ -1,7 +1,6 @@
 // frontend/src/App.tsx
 import React, { useEffect, useState } from "react";
 import { api } from "./api.ts";
-import AvailabilityCalendar from "./AvailabilityCalendar.tsx";
 import { WeekAvailabilityCalendar } from "./WeekAvailabilityCalendar.tsx";
 import { startOfWeek, addDays } from "./utils/dateUtils.ts";
 
@@ -13,9 +12,12 @@ interface Booking {
 }
 
 function App() {
+  // List of all rooms
   const [rooms, setRooms] = useState<string[]>([]);
+  // List of a week's bookings in a room
   const [bookings, setBookings] = useState<Booking[]>([]);
 
+  // States for booking a room
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [duration, setDuration] = useState(1);
   const [startSelection, setStartSelection] = useState<{
@@ -30,12 +32,15 @@ function App() {
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date()));
 
   // For cancelling a booking
-  const [cancelCodes, setCancelCodes] = useState<Record<string, string>>({});
+  const [cancelCode, setCancelCode] = useState("");
+  const [cancelResult, setCancelResult] = useState<string | null>(null);
 
+  // Fetch the list of rooms
   useEffect(() => {
     api.get("/rooms").then((res) => setRooms(res.data));
   }, []);
 
+  // Fetch the bookings of a room for a week
   const fetchBookingsForWeek = async (room: string, weekStart: Date) => {
     const start = weekStart.toISOString().split("T")[0];
     const end = addDays(weekStart, 6).toISOString().split("T")[0];
@@ -52,6 +57,7 @@ function App() {
     fetchBookingsForWeek(selectedRoom, weekStart);
   }, [selectedRoom, weekStart]);
 
+  // Booking event handler
   const handleBooking = async () => {
     if (!selectedRoom || !startSelection) {
       alert("Please select a room and a time slot.");
@@ -82,8 +88,9 @@ function App() {
         end: end.toISOString(),
       });
 
+      const { code, room, start: s, end: e } = res.data;
       setBookingResult(
-        `✅ Booking confirmed!\n\nCancellation code: ${res.data.code}`
+        `✅ Booking confirmed!\nRoom: ${room}\nTime: ${new Date(s).toLocaleString()} - ${new Date(e).toLocaleTimeString()}\nCode: ${code}`
       );
 
       // Reset selection
@@ -96,6 +103,7 @@ function App() {
     }
   };
 
+  // Navigate to the previous or next week
   const prevWeek = () => {
     setWeekStart(addDays(weekStart, -7));
   };
@@ -104,17 +112,33 @@ function App() {
     setWeekStart(addDays(weekStart, 7));
   };
 
-  const cancelBooking = (code: string) => {
-    api.delete(`/cancel/${selectedRoom}/${code}`)
-      //.then(() => fetchBookings(selectedRoom))
-      .catch(err => alert(err.response.data.detail));
-  };
+  // Cancel booking event handler
+  const handleCancelBooking = async () => {
+    if (!cancelCode.trim()) {
+      alert("Please enter a cancellation code.");
+      return;
+    }
 
-  const handleCancelCodeChange = (bookingCode: string, value: string) => {
-    setCancelCodes((prev) => ({
-      ...prev,
-      [bookingCode]: value,
-    }));
+    try {
+      const res = await api.delete(`/bookings/cancel/${cancelCode.trim()}`);
+
+      const { room, start, end } = res.data;
+
+      setCancelResult(
+        `✅ Booking cancelled!\nRoom: ${room}\nTime: ${new Date(start).toLocaleString()} - ${new Date(end).toLocaleTimeString()}`
+      );
+      setCancelCode("");
+
+      // Refresh bookings for current room/week
+      if (selectedRoom) {
+        fetchBookingsForWeek(selectedRoom, weekStart);
+      }
+
+    } catch (err: any) {
+      const message =
+        err.response?.data?.detail || "Failed to cancel booking.";
+      alert(message);
+    }
   };
 
   return (
@@ -132,6 +156,7 @@ function App() {
             bookings={bookings}
             weekStart={weekStart}
             duration={duration}
+            setDuration={setDuration}
             startSelection={startSelection}
             setStartSelection={setStartSelection}
           />
@@ -143,15 +168,6 @@ function App() {
 
             {bookingResult && <p>{bookingResult}</p>}
 
-            <select
-              value={duration}
-              onChange={(e) => setDuration(Number(e.target.value))}
-            >
-              <option value={1}>1 hour</option>
-              <option value={2}>2 hours</option>
-              <option value={3}>3 hours</option>
-            </select>
-
             <button onClick={prevWeek}>Previous week</button>
             <button onClick={nextWeek}>Next week</button>
 
@@ -160,21 +176,6 @@ function App() {
                 <li key={b.code} style={{ marginBottom: "10px" }}>
                   {new Date(b.start).toLocaleString()} –{" "}
                   {new Date(b.end).toLocaleString()}
-
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Enter cancellation code"
-                      value={cancelCodes[b.code] || ""}
-                      onChange={(e) => handleCancelCodeChange(b.code, e.target.value)}
-                    />
-                    <button
-                      onClick={() => cancelBooking(cancelCodes[b.code])}
-                      disabled={!cancelCodes[b.code]}
-                    >
-                      Cancel
-                    </button>
-                  </div>
                 </li>
               ))}
             </ul>
@@ -182,6 +183,24 @@ function App() {
           </div>
         </>
       )}
+
+      <hr />
+
+      <h3>Cancel a booking</h3>
+
+      <input
+        type="text"
+        placeholder="Enter cancellation code"
+        value={cancelCode}
+        onChange={(e) => setCancelCode(e.target.value)}
+        style={{ marginRight: "8px" }}
+      />
+
+      <button onClick={handleCancelBooking}>
+        Cancel booking
+      </button>
+
+      {cancelResult && <p>{cancelResult}</p>}
 
     </div>
   );

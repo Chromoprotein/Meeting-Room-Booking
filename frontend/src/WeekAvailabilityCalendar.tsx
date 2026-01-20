@@ -12,6 +12,7 @@ interface Props {
   bookings: Booking[];
   weekStart: Date;
   duration: number;
+  setDuration: (v: number) => void;
   startSelection: { date: Date; hour: number } | null;
   setStartSelection: (v: { date: Date; hour: number }) => void;
 }
@@ -23,6 +24,7 @@ export const WeekAvailabilityCalendar: React.FC<Props> = ({
   bookings,
   weekStart,
   duration,
+  setDuration,
   startSelection,
   setStartSelection,
 }) => {
@@ -41,18 +43,19 @@ export const WeekAvailabilityCalendar: React.FC<Props> = ({
       return !(end <= bs || start >= be);
     });
 
-  const canStartHere = (date: Date, hour: number) => {
-    const start = new Date(date);
-    start.setHours(hour, 0, 0, 0);
+const canStartHere = (date: Date, hour: number) => {
+  const start = new Date(date);
+  start.setHours(hour, 0, 0, 0);
 
-    const end = new Date(start);
-    end.setHours(hour + duration);
+  // Only check 1-hour startability (we’ll extend in selection logic)
+  const end = new Date(start);
+  end.setHours(hour + 1);
 
-    if (start < today) return false;
-    if (hour + duration > HOURS_END) return false;
+  if (start < today) return false;
+  if (hour + 1 > HOURS_END) return false;
 
-    return !overlaps(start, end);
-  };
+  return !overlaps(start, end);
+};
 
   const isSelectedBlock = (date: Date, hour: number) => {
     if (!startSelection) return false;
@@ -68,6 +71,67 @@ export const WeekAvailabilityCalendar: React.FC<Props> = ({
 
     return !(slotEnd <= selStart || slotStart >= selEnd);
   };
+
+const handleSlotClick = (date: Date, hour: number) => {
+  const MAX_DURATION = 3;
+
+  // Must be selectable to start
+  if (!canStartHere(date, hour)) return;
+
+  if (!startSelection) {
+    setStartSelection({ date, hour });
+    setDuration(1);
+    return;
+  }
+
+  // Only allow interaction on the same day
+  if (date.toDateString() !== startSelection.date.toDateString()) {
+    setStartSelection({ date, hour });
+    setDuration(1);
+    return;
+  }
+
+  const selStartHour = startSelection.hour;
+  const selEndHour = selStartHour + duration - 1;
+
+  // Click outside current max window → reset
+  if (hour < selStartHour || hour > selStartHour + MAX_DURATION - 1) {
+    setStartSelection({ date, hour });
+    setDuration(1);
+    return;
+  }
+
+  // Click inside current selection → adjust duration
+  let newStartHour = selStartHour;
+  let newDuration = hour - selStartHour + 1;
+
+  if (hour < selStartHour) {
+    newStartHour = hour;
+    newDuration = selStartHour - hour + 1;
+  }
+
+  // Cap duration at MAX_DURATION
+  if (newDuration > MAX_DURATION) {
+    if (hour < selStartHour) {
+      newStartHour = selStartHour - MAX_DURATION + 1;
+      newDuration = MAX_DURATION;
+    } else {
+      newDuration = MAX_DURATION;
+    }
+  }
+
+  const start = new Date(startSelection.date);
+  start.setHours(newStartHour, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setHours(start.getHours() + newDuration);
+
+  // Prevent overlapping bookings
+  if (overlaps(start, end)) return;
+
+  setStartSelection({ date: startSelection.date, hour: newStartHour });
+  setDuration(newDuration);
+};
 
   return (
     <div>
@@ -93,15 +157,12 @@ export const WeekAvailabilityCalendar: React.FC<Props> = ({
               return (
                 <div
                   key={d.toDateString()}
-                  onClick={() =>
-                    selectable && setStartSelection({ date: d, hour: h })
-                  }
+                  onClick={() => handleSlotClick(d, h)}
                   style={{
                     height: "36px",
                     margin: "2px",
                     borderRadius: "4px",
                     background: bg,
-                    cursor: selectable ? "pointer" : "not-allowed",
                   }}
                 />
               );

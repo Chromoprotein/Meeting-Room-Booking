@@ -141,12 +141,17 @@ def create_booking(booking: BookingRequest):
     bookings[booking.room] = room_bookings
     return new_booking
 
-@app.delete("/cancel/{room}/{code}")
-def cancel_booking(room: str, code: str):
-    room_bookings = bookings.get(room, [])
-    for b in room_bookings:
-        if b["code"] == code:
-            room_bookings.remove(b)
-            bookings[room] = room_bookings
-            return {"detail": "Booking cancelled"}
-    raise HTTPException(status_code=403, detail="Invalid cancellation code")
+@app.delete("/bookings/cancel/{code}")
+def cancel_booking(code: str):
+    for room, room_bookings in bookings.items():
+        for booking in room_bookings:
+            if booking["code"] == code:
+                room_bookings.remove(booking)
+                return {
+                    "message": "Booking cancelled",
+                    "room": booking["room"],
+                    "start": booking["start"],
+                    "end": booking["end"],
+                }
+
+    raise HTTPException(status_code=404, detail="Invalid cancellation code")
