@@ -1,6 +1,6 @@
 // frontend/src/App.tsx
 import React, { useEffect, useState } from "react";
-import { api } from "./api.ts";
+import CancelBooking from "./components/CancelBooking.tsx";
 import { WeekAvailabilityCalendar } from "./WeekAvailabilityCalendar.tsx";
 import { startOfWeek, addDays } from "./utils/dateUtils.ts";
 import { Booking } from "./utils/types.ts";
@@ -101,31 +101,16 @@ function App() {
   };
 
   // Cancel booking event handler
-  const handleCancelBooking = async () => {
-    if (!cancelCode.trim()) {
-      alert("Please enter a cancellation code.");
-      return;
+  const handleCancel = async (code: string) => {
+    const { room, start, end } = await cancelBooking(code);
+
+    // Refresh bookings if relevant
+    if (selectedRoom) {
+      const updated = await getBookingsForWeek(selectedRoom, weekStart);
+      setBookings(updated);
     }
 
-    try {
-      const { room, start, end } = await cancelBooking(cancelCode.trim());
-
-      setCancelResult(
-        `✅ Booking cancelled!\nRoom: ${room}\nTime: ${new Date(start).toLocaleString()} - ${new Date(end).toLocaleTimeString()}`
-      );
-      setCancelCode("");
-
-      // Refresh bookings for current room/week
-      if (selectedRoom) {
-        const updated = await getBookingsForWeek(selectedRoom, weekStart);
-        setBookings(updated);
-      }
-
-    } catch (err: any) {
-      const message =
-        err.response?.data?.detail || "Failed to cancel booking.";
-      alert(message);
-    }
+    return `✅ Booking cancelled!\nRoom: ${room}\nTime: ${new Date(start).toLocaleString()} - ${new Date(end).toLocaleTimeString()}`;
   };
 
   return (
@@ -179,23 +164,7 @@ function App() {
         </>
       )}
 
-      <Container>
-        <>
-          <Subheading>Cancel a booking</Subheading>
-
-          <input
-            type="text"
-            placeholder="Enter cancellation code"
-            value={cancelCode}
-            onChange={(e) => setCancelCode(e.target.value)}
-            className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2 max-w-96"
-          />
-
-          <Button onClick={handleCancelBooking}>Cancel Booking</Button>
-
-          {cancelResult && <p>{cancelResult}</p>}
-        </>
-      </Container>
+      <CancelBooking onCancel={handleCancel}/>
 
     </div>
   );

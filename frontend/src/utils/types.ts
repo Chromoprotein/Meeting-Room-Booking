@@ -25,3 +25,7 @@ export interface ButtonProps {
 export interface ChildrenProps {
   children: ReactNode;
 }
+
+export interface CancelProps {
+  onCancel: (code: string) => Promise<string>;
+}
