@@ -7,6 +7,7 @@ import { Booking } from "./utils/types.ts";
 import Button from "./components/Button.tsx";
 import Subheading from "./components/Subheading.tsx";
 import Container from "./components/Container.tsx";
+import { getRooms, getBookingsForWeek, cancelBooking, createBooking } from "./services/BookingService.ts";
 
 function App() {
   // List of all rooms
@@ -34,24 +35,13 @@ function App() {
 
   // Fetch the list of rooms
   useEffect(() => {
-    api.get("/rooms").then((res) => setRooms(res.data));
+    getRooms().then(setRooms);
   }, []);
-
-  // Fetch the bookings of a room for a week
-  const fetchBookingsForWeek = async (room: string, weekStart: Date) => {
-    const start = weekStart.toISOString().split("T")[0];
-    const end = addDays(weekStart, 6).toISOString().split("T")[0];
-
-    const res = await api.get(`/bookings/${room}`, {
-      params: { start_date: start, end_date: end },
-    });
-
-    setBookings(res.data);
-  };
 
   useEffect(() => {
     if (!selectedRoom) return;
-    fetchBookingsForWeek(selectedRoom, weekStart);
+
+    getBookingsForWeek(selectedRoom, weekStart).then(setBookings);
   }, [selectedRoom, weekStart]);
 
   // Booking event handler
@@ -79,13 +69,8 @@ function App() {
     }
 
     try {
-      const res = await api.post("/book", {
-        room: selectedRoom,
-        start: start.toISOString(),
-        end: end.toISOString(),
-      });
 
-      const { code, room, start: s, end: e } = res.data;
+      const { code, room, start: s, end: e } = await createBooking(selectedRoom, start, end);
       setBookingResult(
         `✅ Booking confirmed!\nRoom: ${room}\nTime: ${new Date(s).toLocaleString()} - ${new Date(e).toLocaleTimeString()}\nCode: ${code}`
       );
@@ -95,7 +80,8 @@ function App() {
 
       // Re-fetch bookings for current room/week
       if (selectedRoom) {
-        fetchBookingsForWeek(selectedRoom, weekStart);
+        const updated = await getBookingsForWeek(selectedRoom, weekStart);
+        setBookings(updated);
       }
 
     } catch (err: any) {
@@ -122,9 +108,7 @@ function App() {
     }
 
     try {
-      const res = await api.delete(`/bookings/cancel/${cancelCode.trim()}`);
-
-      const { room, start, end } = res.data;
+      const { room, start, end } = await cancelBooking(cancelCode.trim());
 
       setCancelResult(
         `✅ Booking cancelled!\nRoom: ${room}\nTime: ${new Date(start).toLocaleString()} - ${new Date(end).toLocaleTimeString()}`
@@ -133,7 +117,8 @@ function App() {
 
       // Refresh bookings for current room/week
       if (selectedRoom) {
-        fetchBookingsForWeek(selectedRoom, weekStart);
+        const updated = await getBookingsForWeek(selectedRoom, weekStart);
+        setBookings(updated);
       }
 
     } catch (err: any) {
