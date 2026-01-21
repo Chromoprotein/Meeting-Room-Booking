@@ -16,7 +16,6 @@
     --color-zinc-100: oklch(96.7% 0.001 286.375);
     --color-zinc-200: oklch(92% 0.004 286.32);
     --color-zinc-400: oklch(70.5% 0.015 286.067);
-    --color-zinc-500: oklch(55.2% 0.016 285.938);
     --color-black: #000;
     --spacing: 0.25rem;
     --text-sm: 0.875rem;
@@ -26,7 +25,6 @@
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --radius-xl: 0.75rem;
-    --radius-2xl: 1rem;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
