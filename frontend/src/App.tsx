@@ -3,17 +3,15 @@ import React, { useEffect, useState } from "react";
 import CancelBooking from "./components/CancelBooking.tsx";
 import { WeekAvailabilityCalendar } from "./WeekAvailabilityCalendar.tsx";
 import { startOfWeek, addDays } from "./utils/dateUtils.ts";
-import { Booking } from "./utils/types.ts";
 import Button from "./components/Button.tsx";
 import Subheading from "./components/Subheading.tsx";
 import Container from "./components/Container.tsx";
 import { getRooms, getBookingsForWeek, cancelBooking, createBooking } from "./services/BookingService.ts";
+import { useWeeklyBookings } from "./utils/useWeeklyBookings.ts";
 
 function App() {
   // List of all rooms
   const [rooms, setRooms] = useState<string[]>([]);
-  // List of a week's bookings in a room
-  const [bookings, setBookings] = useState<Booking[]>([]);
 
   // States for booking a room
   const [selectedRoom, setSelectedRoom] = useState<string>("");
@@ -29,20 +27,13 @@ function App() {
   // For navigation
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date()));
 
-  // For cancelling a booking
-  const [cancelCode, setCancelCode] = useState("");
-  const [cancelResult, setCancelResult] = useState<string | null>(null);
+  // Custom hooks for fetching bookings
+  const { bookings, setBookings, loading } = useWeeklyBookings(selectedRoom, weekStart);
 
   // Fetch the list of rooms
   useEffect(() => {
     getRooms().then(setRooms);
   }, []);
-
-  useEffect(() => {
-    if (!selectedRoom) return;
-
-    getBookingsForWeek(selectedRoom, weekStart).then(setBookings);
-  }, [selectedRoom, weekStart]);
 
   // Booking event handler
   const handleBooking = async () => {
@@ -149,6 +140,7 @@ function App() {
             <Container>
               <>
                 <Subheading>Booked times</Subheading>
+                {loading && <p>Loading data...</p>}
                 <ul className="flex flex-col gap-3">
                   {bookings.map((b) => (
                     <li key={b.code}>
