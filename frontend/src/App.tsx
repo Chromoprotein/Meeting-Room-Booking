@@ -4,6 +4,9 @@ import { api } from "./api.ts";
 import { WeekAvailabilityCalendar } from "./WeekAvailabilityCalendar.tsx";
 import { startOfWeek, addDays } from "./utils/dateUtils.ts";
 import { Booking } from "./utils/types.ts";
+import Button from "./components/Button.tsx";
+import Subheading from "./components/Subheading.tsx";
+import Container from "./components/Container.tsx";
 
 function App() {
   // List of all rooms
@@ -143,8 +146,9 @@ function App() {
   return (
     <div className="p-20">
 
-      <h1>Meeting Rooms</h1>
-      <select onChange={(e) => setSelectedRoom(e.target.value)}>
+      <h1 className="text-lg font-semibold p-2 m-2">Meeting Rooms</h1>
+
+      <select className="" onChange={(e) => setSelectedRoom(e.target.value)}>
         <option value="">Select a room</option>
         {rooms.map(r => <option key={r} value={r}>{r}</option>)}
       </select>
@@ -159,47 +163,50 @@ function App() {
             startSelection={startSelection}
             setStartSelection={setStartSelection}
           />
+
+          <Button onClick={prevWeek}>Previous Week</Button>
+          <Button onClick={nextWeek}>Next Week</Button>
+
           <div className="mt-20">
-            <h2>Book {selectedRoom}</h2>
-            <button onClick={handleBooking} disabled={!startSelection}>
-              Book
-            </button>
+            <Button onClick={handleBooking} isDisabled={!startSelection}>Book {selectedRoom}</Button>
 
-            {bookingResult && <p>{bookingResult}</p>}
-
-            <button onClick={prevWeek}>Previous week</button>
-            <button onClick={nextWeek}>Next week</button>
-
-            <ul>
-              {bookings.map((b) => (
-                <li key={b.code} className="mb-10">
-                  {new Date(b.start).toLocaleString()} –{" "}
-                  {new Date(b.end).toLocaleString()}
-                </li>
-              ))}
-            </ul>
+            {bookingResult && <Container>{bookingResult}</Container>}
+            
+            <Container>
+              <>
+                <Subheading>Booked times</Subheading>
+                <ul>
+                  {bookings.map((b) => (
+                    <li key={b.code} className="mb-10">
+                      {new Date(b.start).toLocaleString()} –{" "}
+                      {new Date(b.end).toLocaleString()}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            </Container>
 
           </div>
         </>
       )}
 
-      <div className="bg-zinc-200 p-5 my-5 rounded-xl">
-        <h3 className="text-lg font-semibold p-2 m-2">Cancel a booking</h3>
+      <Container>
+        <>
+          <Subheading>Cancel a booking</Subheading>
 
-        <input
-          type="text"
-          placeholder="Enter cancellation code"
-          value={cancelCode}
-          onChange={(e) => setCancelCode(e.target.value)}
-          className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2"
-        />
+          <input
+            type="text"
+            placeholder="Enter cancellation code"
+            value={cancelCode}
+            onChange={(e) => setCancelCode(e.target.value)}
+            className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2"
+          />
 
-        <button className="rounded-xl p-2 m-2 bg-zinc-400 border-2 border-transparent hover:border-2 hover:border-indigo-600" onClick={handleCancelBooking}>
-          Cancel booking
-        </button>
+          <Button onClick={handleCancelBooking}>Cancel Booking</Button>
 
-        {cancelResult && <p>{cancelResult}</p>}
-      </div>
+          {cancelResult && <p>{cancelResult}</p>}
+        </>
+      </Container>
 
     </div>
   );

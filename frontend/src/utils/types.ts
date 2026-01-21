@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Booking {
   start: string;
   end: string;
@@ -12,4 +14,14 @@ export interface Props {
   setDuration: (v: number) => void;
   startSelection: { date: Date; hour: number } | null;
   setStartSelection: (v: { date: Date; hour: number }) => void;
+}
+
+export interface ButtonProps {
+  isDisabled?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}
+
+export interface ChildrenProps {
+  children: ReactNode;
 }
