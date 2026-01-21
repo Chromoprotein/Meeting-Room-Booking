@@ -1,0 +1,3 @@
+# In-memory database
+rooms = ["Room A", "Room B", "Room C"]
+bookings: dict[str, list[dict]] = {}

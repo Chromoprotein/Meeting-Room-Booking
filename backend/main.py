@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from typing import List, Optional
 from uuid import uuid4
 from datetime import date, datetime, timezone
+from models import BookingRequest, BookingResponse
 
 app = FastAPI()
 
@@ -20,18 +20,6 @@ app.add_middleware(
 # In-memory database
 rooms = ["Room A", "Room B", "Room C"]
 bookings = {}  # {room_name: [{start, end, code}]}
-
-# Pydantic models
-class BookingRequest(BaseModel):
-    room: str
-    start: datetime
-    end: datetime
-
-class BookingResponse(BaseModel):
-    room: str
-    start: datetime
-    end: datetime
-    code: str
 
 @app.get("/rooms", response_model=List[str])
 def get_rooms():
