@@ -1,21 +1,6 @@
 import React from "react";
 import { addDays } from "./utils/dateUtils.ts";
-
-interface Booking {
-  start: string;
-  end: string;
-  code: string;
-  room: string;
-}
-
-interface Props {
-  bookings: Booking[];
-  weekStart: Date;
-  duration: number;
-  setDuration: (v: number) => void;
-  startSelection: { date: Date; hour: number } | null;
-  setStartSelection: (v: { date: Date; hour: number }) => void;
-}
+import { Booking, Props } from "./utils/types.ts";
 
 const HOURS_START = 8;
 const HOURS_END = 20;

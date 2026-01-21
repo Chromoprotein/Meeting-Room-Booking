@@ -3,13 +3,7 @@ import React, { useEffect, useState } from "react";
 import { api } from "./api.ts";
 import { WeekAvailabilityCalendar } from "./WeekAvailabilityCalendar.tsx";
 import { startOfWeek, addDays } from "./utils/dateUtils.ts";
-
-interface Booking {
-  start: string;
-  end: string;
-  code: string;
-  room: string;
-}
+import { Booking } from "./utils/types.ts";
 
 function App() {
   // List of all rooms
