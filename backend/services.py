@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from uuid import uuid4
 from storage import rooms, bookings
-from helpers import ensure_utc
+from helpers import ensure_utc, generate_code
 
 MAX_DURATION_HOURS = 3  # maximum allowed booking length
 
@@ -63,7 +63,7 @@ def create_booking_service(room: str, start: datetime, end: datetime):
             )
         
     # Book the room
-    code = str(uuid4())
+    code = generate_code()
     new_booking = {
         "room": room,
         "start": start,
