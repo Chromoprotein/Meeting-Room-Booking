@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from uuid import uuid4
 from storage import rooms, bookings
+from helpers import ensure_utc
 
 MAX_DURATION_HOURS = 3  # maximum allowed booking length
 
@@ -10,6 +11,11 @@ def create_booking_service(room: str, start: datetime, end: datetime):
     # Check that the room exists
     if room not in rooms:
         raise HTTPException(status_code=404, detail="Room not found")
+
+    # Normalize timezones
+    start = ensure_utc(start)
+    end = ensure_utc(end)
+    now = datetime.now(timezone.utc)
     
     # Prevent start time from being after end time
     duration = (end - start).total_seconds() / 3600
@@ -24,13 +30,6 @@ def create_booking_service(room: str, start: datetime, end: datetime):
         )
     
     # Prevent bookings from the past
-    now = datetime.now(timezone.utc)
-
-    if start.tzinfo is None:
-        start = start.replace(tzinfo=timezone.utc)
-    if end.tzinfo is None:
-        end = end.replace(tzinfo=timezone.utc)
-
     if start < now:
         raise HTTPException(
             status_code=400,
@@ -54,7 +53,10 @@ def create_booking_service(room: str, start: datetime, end: datetime):
     # Prevent double booking
     room_bookings = bookings.get(room, [])
     for b in room_bookings:
-        if not (end <= b["start"] or start >= b["end"]):
+        existing_start = ensure_utc(b["start"])
+        existing_end = ensure_utc(b["end"])
+
+        if not (end <= existing_start or start >= existing_end):
             raise HTTPException(
                 status_code=400,
                 detail="Room is already booked for that time slot",
