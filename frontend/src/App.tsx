@@ -141,7 +141,7 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="p-20">
 
       <h1>Meeting Rooms</h1>
       <select onChange={(e) => setSelectedRoom(e.target.value)}>
@@ -159,7 +159,7 @@ function App() {
             startSelection={startSelection}
             setStartSelection={setStartSelection}
           />
-          <div style={{ marginTop: "20px" }}>
+          <div className="mt-20">
             <h2>Book {selectedRoom}</h2>
             <button onClick={handleBooking} disabled={!startSelection}>
               Book
@@ -172,7 +172,7 @@ function App() {
 
             <ul>
               {bookings.map((b) => (
-                <li key={b.code} style={{ marginBottom: "10px" }}>
+                <li key={b.code} className="mb-10">
                   {new Date(b.start).toLocaleString()} –{" "}
                   {new Date(b.end).toLocaleString()}
                 </li>
@@ -183,23 +183,23 @@ function App() {
         </>
       )}
 
-      <hr />
+      <div className="bg-zinc-200 p-5 my-5 rounded-xl">
+        <h3 className="text-lg font-semibold p-2 m-2">Cancel a booking</h3>
 
-      <h3>Cancel a booking</h3>
+        <input
+          type="text"
+          placeholder="Enter cancellation code"
+          value={cancelCode}
+          onChange={(e) => setCancelCode(e.target.value)}
+          className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2"
+        />
 
-      <input
-        type="text"
-        placeholder="Enter cancellation code"
-        value={cancelCode}
-        onChange={(e) => setCancelCode(e.target.value)}
-        style={{ marginRight: "8px" }}
-      />
+        <button className="rounded-xl p-2 m-2 bg-zinc-400 border-2 border-transparent hover:border-2 hover:border-indigo-600" onClick={handleCancelBooking}>
+          Cancel booking
+        </button>
 
-      <button onClick={handleCancelBooking}>
-        Cancel booking
-      </button>
-
-      {cancelResult && <p>{cancelResult}</p>}
+        {cancelResult && <p>{cancelResult}</p>}
+      </div>
 
     </div>
   );

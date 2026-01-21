@@ -120,35 +120,33 @@ const handleSlotClick = (date: Date, hour: number) => {
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "80px repeat(7, 1fr)" }}>
+      <div className="grid grid-cols-8 auto-rows-[36px] gap-2">
         <div />
         {days.map((d) => (
-          <div key={d.toDateString()} style={{ textAlign: "center" }}>
+          <div key={d.toDateString()} className="text-center font-medium">
             {d.toLocaleDateString(undefined, { weekday: "short", day: "numeric" })}
           </div>
         ))}
 
         {hours.map((h) => (
           <React.Fragment key={h}>
-            <div>{h}:00</div>
+            <div className="text-right pr-2 text-sm text-gray-600">{h}:00</div>
             {days.map((d) => {
               const selectable = canStartHere(d, h);
               const selected = isSelectedBlock(d, h);
-
-              let bg = "#34d399";
-              if (!selectable) bg = "#f87171";
-              if (selected) bg = "#60a5fa";
 
               return (
                 <div
                   key={d.toDateString()}
                   onClick={() => handleSlotClick(d, h)}
-                  style={{
-                    height: "36px",
-                    margin: "2px",
-                    borderRadius: "4px",
-                    background: bg,
-                  }}
+                  className={`
+                    rounded-xl transition-colors
+                    ${!selectable
+                      ? "bg-red-600 opacity-60"
+                      : selected
+                      ? "bg-sky-500"
+                      : "bg-green-500 hover:bg-green-400"}
+                  `}
                 />
               );
             })}
