@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from uuid import uuid4
 from datetime import date, datetime, timezone
-from models import BookingRequest, BookingResponse
+from models import CancelResponse, BookingRequest, BookingResponse
 from storage import rooms, bookings
 from services import create_booking_service
 
@@ -47,17 +47,16 @@ def create_booking(booking: BookingRequest):
         booking.end
     )
 
-@app.delete("/bookings/cancel/{code}")
+@app.delete("/bookings/cancel/{code}", response_model=CancelResponse)
 def cancel_booking(code: str):
     for room, room_bookings in bookings.items():
         for booking in room_bookings:
             if booking["code"] == code:
                 room_bookings.remove(booking)
-                return {
-                    "message": "Booking cancelled",
-                    "room": booking["room"],
-                    "start": booking["start"],
-                    "end": booking["end"],
-                }
+                return CancelResponse(
+                    room=booking["room"],
+                    start=booking["start"],
+                    end=booking["end"],
+                )
 
     raise HTTPException(status_code=404, detail="Invalid cancellation code")

@@ -12,3 +12,8 @@ class BookingResponse(BaseModel):
     start: datetime
     end: datetime
     code: str
+
+class CancelResponse(BaseModel):
+    room: str
+    start: datetime
+    end: datetime
