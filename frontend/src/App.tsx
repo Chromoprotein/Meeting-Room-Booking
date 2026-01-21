@@ -148,7 +148,9 @@ function App() {
 
       <h1 className="text-lg font-semibold p-2 m-2">Meeting Rooms</h1>
 
-      <select className="" onChange={(e) => setSelectedRoom(e.target.value)}>
+      <select 
+        className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2 max-w-96"
+        onChange={(e) => setSelectedRoom(e.target.value)}>
         <option value="">Select a room</option>
         {rooms.map(r => <option key={r} value={r}>{r}</option>)}
       </select>
