@@ -37,6 +37,7 @@ export default function CancelBooking({onCancel}: CancelProps) {
             />
 
             <Button onClick={handleCancel}>Cancel Booking</Button>
+            {loading && <p>Canceling...</p>}
             {result && <p>{result}</p>}
         </>
         </Container>

@@ -1,6 +1,6 @@
 import React from "react";
 import { addDays } from "./utils/dateUtils.ts";
-import { Booking, Props } from "./utils/types.ts";
+import { Props } from "./utils/types.ts";
 
 const HOURS_START = 8;
 const HOURS_END = 20;
@@ -77,7 +77,7 @@ const handleSlotClick = (date: Date, hour: number) => {
   }
 
   const selStartHour = startSelection.hour;
-  const selEndHour = selStartHour + duration - 1;
+  //const selEndHour = selStartHour + duration - 1;
 
   // Click outside current max window → reset
   if (hour < selStartHour || hour > selStartHour + MAX_DURATION - 1) {
