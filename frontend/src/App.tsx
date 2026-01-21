@@ -164,20 +164,22 @@ function App() {
             setStartSelection={setStartSelection}
           />
 
-          <Button onClick={prevWeek}>Previous Week</Button>
-          <Button onClick={nextWeek}>Next Week</Button>
+          <div className="flex justify-evenly">
+            <Button onClick={prevWeek}>Previous Week</Button>
+            <Button onClick={handleBooking} isDisabled={!startSelection}>Book {selectedRoom}</Button>
+            <Button onClick={nextWeek}>Next Week</Button>
+          </div>
 
           <div className="mt-20">
-            <Button onClick={handleBooking} isDisabled={!startSelection}>Book {selectedRoom}</Button>
-
+            
             {bookingResult && <Container>{bookingResult}</Container>}
             
             <Container>
               <>
                 <Subheading>Booked times</Subheading>
-                <ul>
+                <ul className="flex flex-col gap-3">
                   {bookings.map((b) => (
-                    <li key={b.code} className="mb-10">
+                    <li key={b.code}>
                       {new Date(b.start).toLocaleString()} –{" "}
                       {new Date(b.end).toLocaleString()}
                     </li>
@@ -199,7 +201,7 @@ function App() {
             placeholder="Enter cancellation code"
             value={cancelCode}
             onChange={(e) => setCancelCode(e.target.value)}
-            className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2"
+            className="bg-zinc-100 transition-colors border-black border-b-2 hover:border-indigo-600 focus:border-indigo-600 focus:outline-hidden p-2 m-2 max-w-96"
           />
 
           <Button onClick={handleCancelBooking}>Cancel Booking</Button>

@@ -221,11 +221,23 @@
   .mb-10 {
     margin-bottom: calc(var(--spacing) * 10);
   }
+  .flex {
+    display: flex;
+  }
   .grid {
     display: grid;
   }
   .table {
     display: table;
+  }
+  .max-w-36 {
+    max-width: calc(var(--spacing) * 36);
+  }
+  .max-w-48 {
+    max-width: calc(var(--spacing) * 48);
+  }
+  .max-w-96 {
+    max-width: calc(var(--spacing) * 96);
   }
   .border-collapse {
     border-collapse: collapse;
@@ -239,8 +251,20 @@
   .grid-cols-8 {
     grid-template-columns: repeat(8, minmax(0, 1fr));
   }
+  .flex-col {
+    flex-direction: column;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .justify-evenly {
+    justify-content: space-evenly;
+  }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
+  }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
   }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
