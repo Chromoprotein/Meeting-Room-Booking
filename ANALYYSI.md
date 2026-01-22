@@ -10,7 +10,7 @@ ChatGPT tietää custom instructions ja vanhojen keskustelujen takia, että olen
 
 2. Mitä tekoäly teki huonosti?
 
-Tekoäly ei mieti käyttäjän kokemusta ja tarpeita (ellei sitä erikseen pyydä miettimään niitä), joten ihmisen täytyy suunnitella oman kokemuksensa pohjalta, mitä ominaisuuksia ohjelmaan kannattaa lisätä. Tästä esimerkkejä alla. Jos seuraisi tekoälyn ehdotuksia sokeasti, voisi eksyä hiomaan yksityiskohtia, joita ei ehkä vielä tarvita tässä vaiheessa.
+Tekoäly ei mieti käyttäjän kokemusta ja tarpeita (ellei sitä erikseen pyydä miettimään niitä), joten ihmisen täytyy suunnitella oman kokemuksensa pohjalta, mitä ominaisuuksia ohjelmaan kannattaa lisätä. Tästä esimerkkejä myöhemmin. Jos seuraisi tekoälyn ehdotuksia sokeasti, voisi eksyä hiomaan yksityiskohtia, joita ei ehkä vielä tarvita tässä vaiheessa.
 
 Aluksi koodissa lähes kaikki on tuupattu samaan tiedostoon, mikä ei ole "the React way", mutta se on ymmärrettävää, koska ensimmäinen versio on luonnos.
 
