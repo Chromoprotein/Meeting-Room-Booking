@@ -1,4 +1,4 @@
-import { api } from "../api.ts";
+import { api } from "../utils/api.ts";
 import { addDays } from "../utils/dateUtils.ts";
 import { Booking } from "../utils/types.ts";
 

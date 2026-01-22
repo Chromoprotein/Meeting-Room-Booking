@@ -1,13 +1,13 @@
 // frontend/src/App.tsx
 import React, { useEffect, useState } from "react";
-import CancelBooking from "./components/CancelBooking.tsx";
+import CancelBooking from "./CancelBooking.tsx";
 import { WeekAvailabilityCalendar } from "./WeekAvailabilityCalendar.tsx";
-import { startOfWeek, addDays } from "./utils/dateUtils.ts";
-import Button from "./components/Button.tsx";
-import Subheading from "./components/Subheading.tsx";
-import Container from "./components/Container.tsx";
-import { getRooms, getBookingsForWeek, cancelBooking, createBooking } from "./services/BookingService.ts";
-import { useWeeklyBookings } from "./utils/useWeeklyBookings.ts";
+import { startOfWeek, addDays } from "../utils/dateUtils.ts";
+import Button from "./Button.tsx";
+import Subheading from "./Subheading.tsx";
+import Container from "./Container.tsx";
+import { getRooms, getBookingsForWeek, cancelBooking, createBooking } from "../services/BookingService.ts";
+import { useWeeklyBookings } from "../utils/useWeeklyBookings.ts";
 
 function App() {
   // List of all rooms

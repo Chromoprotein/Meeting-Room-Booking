@@ -1,6 +1,6 @@
 import React from "react";
-import { addDays } from "./utils/dateUtils.ts";
-import { Props } from "./utils/types.ts";
+import { addDays } from "../utils/dateUtils.ts";
+import { Props } from "../utils/types.ts";
 
 const HOURS_START = 8;
 const HOURS_END = 20;
