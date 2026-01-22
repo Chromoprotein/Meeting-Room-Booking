@@ -12,10 +12,12 @@ ChatGPT tietää custom instructions ja vanhojen keskustelujen takia, että olen
 
 Tekoäly ei mieti käyttäjän kokemusta ja tarpeita (ellei sitä erikseen pyydä miettimään niitä), joten ihmisen täytyy suunnitella oman kokemuksensa pohjalta, mitä ominaisuuksia ohjelmaan kannattaa lisätä. Tästä esimerkkejä alla. Jos seuraisi tekoälyn ehdotuksia sokeasti, voisi eksyä hiomaan yksityiskohtia, joita ei ehkä vielä tarvita tässä vaiheessa.
 
+Aluksi koodissa lähes kaikki on tuupattu samaan tiedostoon, mikä ei ole "the React way", mutta se on ymmärrettävää, koska ensimmäinen versio on luonnos.
+
 3. Mitkä olivat tärkeimmät parannukset, jotka teit tekoälyn tuottamaan koodiin ja miksi?
 
 Mietin, millaisia oikeasti käyttämäni käyttäjäystävälliset ajanvaraussovellukset ovat olleet ja yritin tehdä ohjelmasta samanlaisen, esim. lisäsin visuaalisen kalenterin ja tein pidempien aikojen varaamisesta intuitiivista klikkaamalla time slotteja dropdown menusta valitsemisen sijaan.
 
-Tekoäly ei ottanut huomioon varausten validointia ennen kuin ehdotin sitä. Lisäksi varausten perumisessa oli aluksi ongelma, jonka takia käyttäjät olisivat voineet perua muiden varauksia. Nämä seikat olivat tärkeitä, jotta ohjelma toimisi ennalta-arvattavasti ja turvallisesti.
+Tekoäly ei ottanut huomioon varausten validointia ennen kuin ehdotin sitä. Lisäksi varausten perumisessa oli aluksi ongelma, jonka takia käyttäjät olisivat voineet perua muiden varauksia, joten korjasin sen. Nämä seikat olivat tärkeitä, jotta ohjelma toimisi ennalta-arvattavasti ja turvallisesti.
 
 Tein koodista luettavampaa ja helpommin muokattavaa siirtämällä pieniä kokonaisuuksia pois App.tsx:stä esim. kansioihin components, services, styles, utils. Korvasin CSS inline stylet selkeämmällä Tailwind CSS:llä. Ja backendiin tein esim. models, services, storage, helpers -tiedostot, jotta koodi olisi selkeämpää.
